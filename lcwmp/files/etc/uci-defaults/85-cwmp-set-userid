@@ -1,0 +1,32 @@
+# Copy defaults by the factory to the cwmp UCI user section.
+
+# Get Manufacturer OUI.
+oui=$(uci -q get cwmp.cpe.manufacturer_oui)
+if [ -z "${oui}" ]; then
+	oui=$(db -q get device.deviceinfo.ManufacturerOUI)
+fi
+
+oui=$(echo "${oui}" | tr 'a-f' 'A-F')
+
+# Get system serial number.
+serial=$(uci -q get cwmp.cpe.serial_number)
+if [ -z "${serial}" ]; then
+	serial=$(db -q get device.deviceinfo.SerialNumber)
+fi
+
+# Get userid values
+acs_userid=$(uci -q get cwmp.acs.userid)
+cpe_userid=$(uci -q get cwmp.cpe.userid)
+
+# Only set if they are empty
+if [ -z "$acs_userid" ]
+then
+    uci -q set cwmp.acs.userid="${oui}-${serial}"
+fi
+
+if [ -z "$cpe_userid" ]
+then
+    uci -q set cwmp.cpe.userid="${oui}-${serial}"
+fi
+
+# No need for commit here, it is done by uci_apply_defaults().

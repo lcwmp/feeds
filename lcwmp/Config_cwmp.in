@@ -1,0 +1,14 @@
+choice
+       prompt "Select ACS sever"
+       default CWMP_ACS_MULTI
+       depends on PACKAGE_icwmp || \
+		   PACKAGE_icwmp-openssl || \
+		   PACKAGE_icwmp-wolfssl || \
+		   PACKAGE_icwmp-mbedtls
+
+config CWMP_ACS_MULTI
+	bool "No specific ACS, follow standard"
+
+config CWMP_ACS_HDM
+	bool "Select HDM as ACS server"
+endchoice
